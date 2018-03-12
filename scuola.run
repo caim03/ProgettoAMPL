@@ -6,6 +6,7 @@ data Progetto/ProgettoAMPL/scuola.dat;
 
 let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 
+# Read training set
 read tr_Ptr < (file_tr);
 read{k in 1..tr_Ptr} (tr_xtr[k,1], tr_xtr[k,2], tr_xtr[k,3], tr_xtr[k,4], tr_xtr[k,5], tr_xtr[k,6],
     tr_xtr[k,7], tr_xtr[k,8], tr_xtr[k,9], tr_xtr[k,10], tr_xtr[k,11],
@@ -14,5 +15,3 @@ read{k in 1..tr_Ptr} (tr_xtr[k,1], tr_xtr[k,2], tr_xtr[k,3], tr_xtr[k,4], tr_xtr
     tr_xtr[k,22], tr_xtr[k,23], tr_xtr[k,24], tr_xtr[k,25], tr_xtr[k,26],
     tr_xtr[k,27], tr_xtr[k,28], tr_xtr[k,29], tr_xtr[k,30], tr_xtr[k,31],
     tr_xtr[k,32], tr_ytr[k]) < (file_tr);
-
-display tr_xtr;    
