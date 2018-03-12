@@ -1,0 +1,8 @@
+reset;
+option randseed 0;
+
+model scuola.mod;
+data scuola.dat;
+
+read tr_Ptr < cleaned_training.txt;
+display tr_Ptr;
