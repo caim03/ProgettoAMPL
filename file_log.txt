@@ -1,0 +1,6 @@
+------------------------------------------------------
+training of the nn with 3 neurons 1 and 3 neurons 2 in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.243224
+Miglioramento Errore: old 0.243224 new 0.223349
+Miglioramento Errore: old 0.223349 new 0.220196
