@@ -12,6 +12,11 @@ param Pv;
 param xv{1..Pv, 1..ingr};
 param yv{1..Pv};
 
+param lb_f;
+param ub_f;
+param lb{1..ingr};
+param ub{1..ingr};
+
 param nl, integer;
 param gamma;
 param best_nl;
