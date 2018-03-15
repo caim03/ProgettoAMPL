@@ -8,7 +8,7 @@ let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma := 0.001;
+let gamma := 0.0001;
 let nl1 := 3;
 let nl2 := 3;
 let best_nl1 := nl1;
@@ -61,11 +61,19 @@ if(i!=1 && i!=3 && i!=4 && i!=10 && i!=11 && i!=12 &&i!=13 &&i!=14 &&i!=15) then
 }
 let {i in 1..Ptr} ytr[i]:=2.0*((ytr[i]-lb_f)/(ub_f-lb_f)-0.5);
 let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
-#let {k in 1..Ptr,i in 1..ingr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
-#let {k in 1..Pv,i in 1..ingr} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
 
-repeat while (stop_tr1 == 0){
-    repeat while (stop_tr2 == 0){
+
+#for{n1 in 3..4}{
+
+#    let nl1 := n1;
+
+#    for{n2 in 3..4}{
+
+#        let nl2 := n2;
+
+        let nl1 := 3;
+        let nl2 := 3;
+
         printf "------------------------------------------------------\n" > (file_log);
         printf "training of the nn with %d neurons 1 and %d neurons 2 in the hidden layer\n", nl1, nl2 > (file_log);
         printf "------------------------------------------------------\n" > (file_log);
@@ -94,21 +102,10 @@ repeat while (stop_tr1 == 0){
 
             let best_nl1 := nl1;
             let best_nl2 := nl2;
-            let nl2 := nl2 + 1;
             let err_v := loc_err_v;
             let err_tr := loc_err_tr;
         }
-        else {
-            let stop_tr2 := 1;
-        }
-    }
-    let nl1 := nl1 + 1;
-    let nl2 := 3;
-    let stop_tr2 := 0;
-
-    if (nl1 == 10) then{
-        let stop_tr1 := 1;
-    }
-}
+#    }
+#}
 
 printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);

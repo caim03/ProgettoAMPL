@@ -34,14 +34,31 @@ var v{1..nl2}; # Pesi in uscita
 var win{1..ingr + 1, 1..nl1}; # Pesi in ingresso
 var l{1..nl1 + 1, 1..nl2}; # Pesi tra due strati nascosti
 
+#y(x) = sum{j in 1..nl2} (v[j] * g( y2[j]));
+
+#y2(j) = sum{i in 1.. nl1} (l[i,j] * g( y1[i] ) - l[nl1+1, j])
+
+#y1(i) = sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] ) ;
+
+#  => g(y1(i)) = (1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))))
+
+#    =>  y2(j) = sum{i in 1.. nl1} (l[i,j] * (1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] ))))) - l[nl1+1, j])
+
+#      => g(y2(j)) = (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j])))))
+
+#        => y(x) = sum{j in 1..nl2} (v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))));
+
+# => 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p])^2)
+
+# 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p])^2)
+# +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);
+
+
 # Funzione obiettivo training
-minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-sum{j in 1..nl2}(v[j]/
-(1+exp(-(sum{i in 1..nl1}(l[i,j])/(1+exp(-(sum{k in 1..ingr}(xtr[p,k]*win[k,i]) - win[ingr+1, i]))) - l[nl1+1, j]))))
--ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);
+minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p])^2)
+ +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);
 
 # Validation test
-minimize Error_v: 1/(2.0*Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl2}(v[j]/
-(1+exp(-(sum{i in 1..nl1}(l[i,j])/(1+exp(-(sum{k in 1..ingr}(xv[p,k]*win[k,i]) - win[ingr+1, i]))) - l[nl1+1, j]))))
--yv[p]);
+minimize Error_v: 1/(2.0*Ptr)*sum{p in 1..Ptr}abs(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p]));
+
+minimize boh: 0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);
