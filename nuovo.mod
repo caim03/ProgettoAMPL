@@ -32,14 +32,14 @@ var v{1..nl}; # Pesi in uscita
 var win{1..ingr + 1, 1..nl}; # Pesi in ingresso
 
 # Funzione obiettivo training
-minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-sum{j in 1..nl}(v[j]/
-(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+#sum{j in 1..nl}(v[j]/
+#(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
 
 # Validation test
-minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j]/
-(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
+#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+#sum{j in 1..nl}(v[j]/
+#(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
 
 # Tangente iperbolica
 #minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
@@ -50,3 +50,13 @@ sum{j in 1..nl}(v[j]/
 #minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
 #sum{j in 1..nl}(v[j]*1.7159*
 #(tanh(0.666667 * (sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
+
+# Bipolar Sigmoid
+minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+sum{j in 1..nl}(v[j] * (-1 + 1/
+(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+
+# Validation test
+minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+sum{j in 1..nl}(v[j] * (-1 + 1/
+(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))))) -yv[p]);

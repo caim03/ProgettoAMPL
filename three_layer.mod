@@ -55,10 +55,10 @@ var l{1..nl1 + 1, 1..nl2}; # Pesi tra due strati nascosti
 
 
 # Funzione obiettivo training
-minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p])^2)
+minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl2} ((v[j] * (-1 + 1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * (-1 + 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] ))))) - l[nl1+1, j]))))))-ytr[p])^2)
  +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);
 
 # Validation test
-minimize Error_v: 1/(2.0*Ptr)*sum{p in 1..Ptr}abs(sum{j in 1..nl2} ((v[j] * (1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] )))) - l[nl1+1, j]))))))-ytr[p]));
+minimize Error_v: 1/(2.0*Ptr)*sum{p in 1..Ptr}abs(sum{j in 1..nl2} ((v[j] * (-1 + 1 / (1 + exp(-( sum{i in 1.. nl1} (l[i,j] * (-1 + 1 / (1 + exp(-(  sum{k in 1..ingr} ( (win[k,i] * xtr[p,k]) - win[ingr + 1,i] ))))) - l[nl1+1, j]))))))-ytr[p]));
 
 minimize boh: 0.5*gamma*sum{i in 1..ingr+1, j in 1..nl1, k in 1..nl2}(win[i,j]^2+v[j]^2 + l[j,k]);

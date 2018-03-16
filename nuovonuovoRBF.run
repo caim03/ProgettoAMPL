@@ -1,14 +1,16 @@
 reset;
 option randseed 0;
 
-model Progetto/ProgettoAMPL/nuovo.mod;
+model Progetto/ProgettoAMPL/rbf.mod;
 data Progetto/ProgettoAMPL/nuovonuovo.dat;
 
 let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma := 0.0001;
+let rho1 := 0.1;
+let rho2 := 0.1;
+let sigma := 0.00001;
 let nl := 3;
 let best_nl := nl;
 let err_tr := 1.e30;
@@ -45,15 +47,8 @@ for {i in 1..ingr}{
     let ub[i] := max{j in 1..Ptr}xtr[j,i];
 }
 
+display lb, ub;
 
-#for {i in 1..ingr}
-#{
-#if(i==3 || i==7 || i==8|| i==9 || i==10 || i==11|| i==20 || i==21 || i==22
-#|| i==23 || i==24 || i==25 || i==27 || i==28) then {
-#  let {k in 1..Ptr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
-#  let {k in 1..Pv} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
-#}
-#}
 for {i in 1..ingr}
 {
 if(i==2 || i==5 || i==6|| i==7 || i==8 || i==13|| i==13 || i==15 || i==16
@@ -77,8 +72,8 @@ repeat while (stop_tr == 0){
     let loc_err_v := 1.e30;
 
     for{k in 1..nmax}{
-        let{i in 1..ingr+1, j in 1..nl} win[i,j] := Uniform(-10, 10);
         let{i in 1..nl} v[i] := Uniform(-10, 10);
+        #let{i in 1..nl} c[i] := Uniform(-10, 10);
 
         option solver './knitro';
         option knitro_options "opttol = 0.0001";

@@ -1,21 +1,23 @@
 reset;
 option randseed 0;
 
-model Progetto/ProgettoAMPL/nuovo.mod;
+model Progetto/ProgettoAMPL/three_layer.mod;
 data Progetto/ProgettoAMPL/nuovonuovo.dat;
 
 let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma := 0.0001;
-let nl := 3;
-let best_nl := nl;
+let gamma := 0.01;
+let nl1 := 4;
+let nl2 := 4;
+let best_nl1 := nl1;
+let best_nl2 := nl2;
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let stop_tr := 0;
+let stop_tr1 := 0;
+let stop_tr2 := 0;
 let nmax := 10;
-
 
 # Read training set
 read Ptr < (file_tr);
@@ -68,40 +70,51 @@ let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
 #let {k in 1..Ptr,i in 1..ingr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
 #let {k in 1..Pv,i in 1..ingr} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
 
-repeat while (stop_tr == 0){
-    printf "------------------------------------------------------\n" > (file_log);
-    printf "training of the nn with %d neurons in the hidden layer\n", nl > (file_log);
-    printf "------------------------------------------------------\n" > (file_log);
 
-    let loc_err_tr := 1.e30;
-    let loc_err_v := 1.e30;
 
-    for{k in 1..nmax}{
-        let{i in 1..ingr+1, j in 1..nl} win[i,j] := Uniform(-10, 10);
-        let{i in 1..nl} v[i] := Uniform(-10, 10);
+#for{n1 in 3..4}{
 
-        option solver './knitro';
-        option knitro_options "opttol = 0.0001";
-        solve;
+#    let nl1 := n1;
 
-        if (Error_v <= loc_err_v) then {
-            printf "Miglioramento Errore: old %f new %f\n", loc_err_v, Error_v >> (file_log);
-            let loc_err_v := Error_v;
-            let loc_err_tr := Error_tr;
+
+#        let nl2 := n2;
+
+        let nl1 := 3;
+        let nl2 := 3;
+        #    for{n2 in 3..4}{
+
+        printf "------------------------------------------------------\n" > (file_log);
+        printf "training of the nn with %d neurons 1 and %d neurons 2 in the hidden layer\n", nl1, nl2 > (file_log);
+        printf "------------------------------------------------------\n" > (file_log);
+
+        let loc_err_tr := 1.e30;
+        let loc_err_v := 1.e30;
+
+        for{k in 1..nmax}{
+            let{i in 1..ingr+1, j in 1..nl1} win[i,j] := Uniform(-10, 10);
+            let{i in 1..nl2} v[i] := Uniform(-10, 10);
+            let{i in 1..nl1+1, j in 1..nl2} l[i,j] := Uniform(-10, 10);
+
+            option solver './knitro';
+            option knitro_options "opttol = 0.0001";
+            solve;
+
+            if (Error_v <= loc_err_v) then {
+                printf "Miglioramento Errore: old %f new %f\n", loc_err_v, Error_v >> (file_log);
+                let loc_err_v := Error_v;
+                let loc_err_tr := Error_tr;
+            }
         }
-    }
 
-    if (loc_err_v < err_v) then{
-        printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
+        if (loc_err_v < err_v) then{
+            printf "L'errore migliore sul validation set è %f con %d neuroni 1 e %d neuroni 2\n", loc_err_v, nl1, nl2 >> (file_log);
 
-        let best_nl := nl;
-        let nl := nl + 1;
-        let err_v := loc_err_v;
-        let err_tr := loc_err_tr;
-    }
-    else {
-        let stop_tr := 1;
-    }
-}
+            let best_nl1 := nl1;
+            let best_nl2 := nl2;
+            let err_v := loc_err_v;
+            let err_tr := loc_err_tr;
+        }
+#    }
+#}
 
 printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);
