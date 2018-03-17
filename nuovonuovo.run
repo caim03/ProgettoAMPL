@@ -56,7 +56,7 @@ for {i in 1..ingr}{
 #}
 for {i in 1..ingr}
 {
-if(i==2 || i==5 || i==6|| i==7 || i==8 || i==13|| i==13 || i==15 || i==16
+if(i==2 || i==5 || i==6|| i==7 || i==8 || i==13|| i==14 || i==15 || i==16
 || i==17) then {
   let {k in 1..Ptr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
   let {k in 1..Pv} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
@@ -77,8 +77,8 @@ repeat while (stop_tr == 0){
     let loc_err_v := 1.e30;
 
     for{k in 1..nmax}{
-        let{i in 1..ingr+1, j in 1..nl} win[i,j] := Uniform(-10, 10);
-        let{i in 1..nl} v[i] := Uniform(-10, 10);
+        let{i in 1..ingr+1, j in 1..nl} win[i,j] := Uniform(-1, 1);
+        let{i in 1..nl} v[i] := Uniform(-1, 1);
 
         option solver './knitro';
         option knitro_options "opttol = 0.0001";

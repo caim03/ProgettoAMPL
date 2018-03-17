@@ -1,5 +1,50 @@
 ------------------------------------------------------
-training of the nn with 3 neurons 1 and 3 neurons 2 in the hidden layer
+training of the nn with 3 neurons in the hidden layer
 ------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.574948
-Miglioramento Errore: old 0.574948 new 0.574948
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.064273
+Miglioramento Errore: old 0.064273 new 0.062904
+Miglioramento Errore: old 0.062904 new 0.062360
+Miglioramento Errore: old 0.062360 new 0.060404
+L'errore migliore sul validation set è 0.060404 con 3 neuroni
+------------------------------------------------------
+training of the nn with 4 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.059361
+L'errore migliore sul validation set è 0.059361 con 4 neuroni
+------------------------------------------------------
+training of the nn with 5 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.061961
+Miglioramento Errore: old 0.061961 new 0.060963
+Miglioramento Errore: old 0.060963 new 0.059919
+Miglioramento Errore: old 0.059919 new 0.058517
+L'errore migliore sul validation set è 0.058517 con 5 neuroni
+------------------------------------------------------
+training of the nn with 6 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.060231
+Miglioramento Errore: old 0.060231 new 0.058352
+Miglioramento Errore: old 0.058352 new 0.057864
+L'errore migliore sul validation set è 0.057864 con 6 neuroni
+------------------------------------------------------
+training of the nn with 7 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.058663
+Miglioramento Errore: old 0.058663 new 0.057291
+L'errore migliore sul validation set è 0.057291 con 7 neuroni
+------------------------------------------------------
+training of the nn with 8 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.061299
+Miglioramento Errore: old 0.061299 new 0.058365
+Miglioramento Errore: old 0.058365 new 0.057203
+Miglioramento Errore: old 0.057203 new 0.053839
+L'errore migliore sul validation set è 0.053839 con 8 neuroni
+------------------------------------------------------
+training of the nn with 9 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.058007
+Miglioramento Errore: old 0.058007 new 0.057803
+Miglioramento Errore: old 0.057803 new 0.056710
+Miglioramento Errore: old 0.056710 new 0.056501
+Il migliore errore in assoluto è 0.053839

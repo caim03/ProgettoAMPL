@@ -31,7 +31,7 @@ param stop_tr;
 var v{1..nl}; # Pesi in uscita
 var win{1..ingr + 1, 1..nl}; # Pesi in ingresso
 
-# Funzione obiettivo training
+# Funzione obiettivo training - sigmoid
 #minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
 #sum{j in 1..nl}(v[j]/
 #(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
@@ -52,11 +52,34 @@ var win{1..ingr + 1, 1..nl}; # Pesi in ingresso
 #(tanh(0.666667 * (sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
 
 # Bipolar Sigmoid
-minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-sum{j in 1..nl}(v[j] * (-1 + 1/
-(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+#sum{j in 1..nl}(v[j] * (-1 + 1/
+#(1+exp(-(sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
 
 # Validation test
+#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+#sum{j in 1..nl}(v[j] * (-1 + 1/
+#(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))))) -yv[p]);
+
+# RELU
+#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+#sum{j in 1..nl}(v[j]*
+#log(1+exp((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+
+# Validation RELU
+#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+#sum{j in 1..nl}(v[j]*
+#log(1+exp((sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
+
+# BENT IDENTITY
+minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+sum{j in 1..nl}(v[j]*
+((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
+sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])^2 +
+0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+
+# Validation BENT
 minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j] * (-1 + 1/
-(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))))) -yv[p]);
+sum{j in 1..nl}(v[j]*
+((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
+sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])
