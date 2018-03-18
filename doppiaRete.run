@@ -1,0 +1,119 @@
+reset;
+option randseed 0;
+
+model Progetto/ProgettoAMPL/doppiaRete.mod;
+data Progetto/ProgettoAMPL/doppiaRete.dat;
+
+let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
+let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
+let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+
+let gamma1 := 0.00001;
+let gamma2 := 0.000001;
+
+let nl1 := 3;
+let nl2 := 3;
+let best_nl1 := nl1;
+let best_nl2 := nl2;
+let err_tr := 1.e30;
+let err_v := 1.e30;
+let stop_tr := 0;
+let nmax := 10;
+
+# Read training set
+read Ptr < (file_tr);
+read{k in 1..Ptr} (xtr1[k,1], xtr1[k,2], xtr1[k,3], xtr1[k,4], xtr1[k,5], xtr1[k,6],
+    xtr1[k,7], xtr1[k,8], xtr1[k,9], xtr1[k,10], xtr1[k,11],
+    xtr1[k,12], xtr1[k,13], xtr1[k,14], xtr1[k,15], xtr1[k,16],
+    xtr1[k,17], xtr1[k,18], xtr1[k,19], xtr1[k,20], xtr1[k,21],
+    xtr1[k,22], xtr1[k,23], xtr1[k,24], xtr1[k,25], xtr1[k,26],
+    xtr1[k,27], xtr1[k,28], xtr1[k,29], xtr1[k,30], xtr1[k,31],
+    xtr1[k,32], xtr1[k,33], xtr1[k,34], xtr1[k,35], xtr1[k,36],
+    xtr1[k,37], xtr1[k,38], xtr1[k,39], xtr1[k,40], xtr1[k,41],
+    xtr1[k,42], xtr2[k,1], xtr2[k,2], xtr2[k,3], ytr[k]) < (file_tr);
+
+# Read validation set
+read Pv < (file_val);
+read{k in 1..Pv} (xv1[k,1], xv1[k,2], xv1[k,3], xv1[k,4], xv1[k,5], xv1[k,6],
+    xv1[k,7], xv1[k,8], xv1[k,9], xv1[k,10], xv1[k,11],
+    xv1[k,12], xv1[k,13], xv1[k,14], xv1[k,15], xv1[k,16],
+    xv1[k,17], xv1[k,18], xv1[k,19], xv1[k,20], xv1[k,21],
+    xv1[k,22], xv1[k,23], xv1[k,24], xv1[k,25], xv1[k,26],
+    xv1[k,27], xv1[k,28], xv1[k,29], xv1[k,30], xv1[k,31],
+    xv1[k,32], xv1[k,33], xv1[k,34], xv1[k,35], xv1[k,36],
+    xv1[k,37], xv1[k,38], xv1[k,39], xv1[k,40], xv1[k,41],
+    xv1[k,42], xv2[k,1], xv2[k,2], xv2[k,3], yv[k]) < (file_val);
+
+# Scaling data
+let lb_f := min{i in 1..Ptr}ytr[i];
+let ub_f := max{i in 1..Ptr}ytr[i];
+
+for {i in 1..ingr1}{
+    let lb1[i] := min{j in 1..Ptr}xtr1[j,i];
+    let ub1[i] := max{j in 1..Ptr}xtr1[j,i];
+}
+
+for {i in 1..ingr2}{
+    let lb2[i] := min{j in 1..Ptr}xtr2[j,i];
+    let ub2[i] := max{j in 1..Ptr}xtr2[j,i];
+}
+
+let {i in 1..Ptr} ytr[i]:=2.0*((ytr[i]-lb_f)/(ub_f-lb_f)-0.5);
+let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
+
+let {k in 1..Ptr,i in 1..ingr1} xtr1[k,i]:=2.0*((xtr1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+let {k in 1..Pv,i in 1..ingr1} xv1[k,i]:=2.0*((xv1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+
+let {k in 1..Ptr,i in 1..ingr2} xtr2[k,i]:=2.0*((xtr2[k,i]-lb2[i])/(ub2[i]-lb2[i])-0.5);
+let {k in 1..Pv,i in 1..ingr2} xv2[k,i]:=2.0*((xv2[k,i]-lb2[i])/(ub2[i]-lb2[i])-0.5);
+
+
+for{n in 3..6}
+{
+
+  let nl1 := n;
+  for{m in 3..6}
+    {
+
+    let nl2 := m;
+
+    printf "------------------------------------------------------\n" > (file_log);
+    printf "training of the nn with %d _ %d neurons in the hidden layer\n", nl1, nl2 > (file_log);
+    printf "------------------------------------------------------\n" > (file_log);
+
+    let loc_err_tr := 1.e30;
+    let loc_err_v := 1.e30;
+
+    for{k in 1..nmax}{
+        let{i in 1..ingr1+1, j in 1..nl1} win1[i,j] := Uniform(-10, 10);
+        let{i in 1..nl1} v1[i] := Uniform(-10, 10);
+        let{i in 1..ingr2+1, j in 1..nl2} win2[i,j] := Uniform(-10, 10);
+        let{i in 1..nl2} v2[i] := Uniform(-10, 10);
+        let{i in 1..2} z[i] := Uniform(-10, 10);
+
+
+        option solver './knitro';
+        option knitro_options "opttol = 0.0001";
+        solve;
+
+        if (Error_v <= loc_err_v) then {
+            printf "Miglioramento Errore: old %f new %f\n", loc_err_v, Error_v >> (file_log);
+            let loc_err_v := Error_v;
+            let loc_err_tr := Error_tr;
+        }
+    }
+
+    if (loc_err_v < err_v) then{
+        printf "L'errore migliore sul validation set è %f con %d_%d neuroni\n", loc_err_v, nl1, nl2 >> (file_log);
+
+        let best_nl1 := nl1;
+        let best_nl2 := nl2;
+        let err_v := loc_err_v;
+        let err_tr := loc_err_tr;
+    }
+    else {
+        let stop_tr := 1;
+    }
+    }
+}
+printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);

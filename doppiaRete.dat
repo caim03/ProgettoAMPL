@@ -1,0 +1,4 @@
+data;
+
+param ingr1 := 42;
+param ingr2 := 3;
