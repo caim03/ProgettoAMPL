@@ -8,8 +8,8 @@ let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma1 := 0.00001;
-let gamma2 := 0.000001;
+let gamma1 := 0.01;
+let gamma2 := 0.01;
 
 let nl1 := 3;
 let nl2 := 3;
@@ -19,6 +19,7 @@ let err_tr := 1.e30;
 let err_v := 1.e30;
 let stop_tr := 0;
 let nmax := 10;
+
 
 # Read training set
 read Ptr < (file_tr);
@@ -110,6 +111,7 @@ for{n in 3..6}
         let best_nl2 := nl2;
         let err_v := loc_err_v;
         let err_tr := loc_err_tr;
+
     }
     else {
         let stop_tr := 1;
