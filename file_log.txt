@@ -1,42 +1,18 @@
 ------------------------------------------------------
-training of the nn with 3 _ 3 neurons in the hidden layer
+training of the nn with 3 neurons in the hidden layer
 ------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.205918
-Miglioramento Errore: old 0.205918 new 0.193689
-Miglioramento Errore: old 0.193689 new 0.177645
-L'errore migliore sul validation set è 0.177645 con 3_3 neuroni
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.063620
+Miglioramento Errore: old 0.063620 new 0.057533
+Miglioramento Errore: old 0.057533 new 0.055181
+L'errore migliore sul validation set è 0.055181 con 3 neuroni
 ------------------------------------------------------
-training of the nn with 3 _ 4 neurons in the hidden layer
+training of the nn with 4 neurons in the hidden layer
 ------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.195579
-Miglioramento Errore: old 0.195579 new 0.180642
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.048355
+L'errore migliore sul validation set è 0.048355 con 4 neuroni
 ------------------------------------------------------
-training of the nn with 3 _ 5 neurons in the hidden layer
+training of the nn with 5 neurons in the hidden layer
 ------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.187173
-Miglioramento Errore: old 0.187173 new 0.183327
-------------------------------------------------------
-training of the nn with 3 _ 6 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.179897
-------------------------------------------------------
-training of the nn with 4 _ 3 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.192665
-Miglioramento Errore: old 0.192665 new 0.184352
-Miglioramento Errore: old 0.184352 new 0.182691
-------------------------------------------------------
-training of the nn with 4 _ 4 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.199970
-Miglioramento Errore: old 0.199970 new 0.199386
-Miglioramento Errore: old 0.199386 new 0.185589
-------------------------------------------------------
-training of the nn with 4 _ 5 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.186882
-Miglioramento Errore: old 0.186882 new 0.178139
-------------------------------------------------------
-training of the nn with 4 _ 6 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.183458
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.056442
+Miglioramento Errore: old 0.056442 new 0.053514
+Il migliore errore in assoluto è 0.048355
