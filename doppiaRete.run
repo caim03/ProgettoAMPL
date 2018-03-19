@@ -8,8 +8,8 @@ let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma1 := 0.01;
-let gamma2 := 0.01;
+let gamma1 := 0.00001;
+let gamma2 := 0.00001;
 
 let nl1 := 3;
 let nl2 := 3;
@@ -62,8 +62,18 @@ for {i in 1..ingr2}{
 let {i in 1..Ptr} ytr[i]:=2.0*((ytr[i]-lb_f)/(ub_f-lb_f)-0.5);
 let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
 
-let {k in 1..Ptr,i in 1..ingr1} xtr1[k,i]:=2.0*((xtr1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
-let {k in 1..Pv,i in 1..ingr1} xv1[k,i]:=2.0*((xv1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+
+for {i in 1..ingr1}
+{
+if(i==3 || i==7 || i==8|| i==9 || i==10 || i==11|| i==20 || i==21 || i==22
+|| i==23|| i==24 || i==25) then {
+
+let {k in 1..Ptr} xtr1[k,i]:=2.0*((xtr1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+let {k in 1..Pv} xv1[k,i]:=2.0*((xv1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+}
+}
+#let {k in 1..Ptr,i in 1..ingr1} xtr1[k,i]:=2.0*((xtr1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
+#let {k in 1..Pv,i in 1..ingr1} xv1[k,i]:=2.0*((xv1[k,i]-lb1[i])/(ub1[i]-lb1[i])-0.5);
 
 let {k in 1..Ptr,i in 1..ingr2} xtr2[k,i]:=2.0*((xtr2[k,i]-lb2[i])/(ub2[i]-lb2[i])-0.5);
 let {k in 1..Pv,i in 1..ingr2} xv2[k,i]:=2.0*((xv2[k,i]-lb2[i])/(ub2[i]-lb2[i])-0.5);
@@ -111,6 +121,12 @@ for{n in 3..6}
         let best_nl2 := nl2;
         let err_v := loc_err_v;
         let err_tr := loc_err_tr;
+        let{i in 1..ingr1+1, j in 1..nl1} best_win1[i,j] := win1[i,j];
+        let{i in 1..nl1} best_v1[i] := v1[i];
+        let{i in 1..ingr2+1, j in 1..nl2} best_win2[i,j] := win2[i,j];
+        let{i in 1..nl2} best_v2[i] := v2[i];
+        let{i in 1..2} best_z[i] := z[i];
+
 
     }
     else {

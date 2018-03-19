@@ -36,6 +36,12 @@ param loc_err_v;
 param nmax;
 param stop_tr;
 
+param best_v1{1..nl1}; # Pesi in uscita
+param best_win1{1..ingr1 + 1, 1..nl1}; # Pesi in ingresso
+param best_v2{1..nl2}; # Pesi in uscita
+param best_win2{1..ingr2 + 1, 1..nl2}; # Pesi in ingresso
+param best_z{1..2}; #Peso tra le due reti
+
 # Variabili
 var v1{1..nl1}; # Pesi in uscita
 var win1{1..ingr1 + 1, 1..nl1}; # Pesi in ingresso
