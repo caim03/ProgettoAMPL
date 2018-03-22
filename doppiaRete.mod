@@ -74,3 +74,25 @@ z[1] * (-1 + 1/(1+exp(-(sum{j in 1..nl1}v1[j] * (-1 + 1/(1+exp(-(sum{k in 1..ing
 +
 z[2] * (-1 + 1/(1+exp(-(sum{j in 1..nl2}v2[j] * (-1 + 1/(1+exp(-(sum{k in 1..ingr2}win2[k,j]*xv2[p,k]-win2[ingr2+1,j]))))))))
 -yv[p]);
+
+#BENT IDENTITY
+
+#minimize Error_tr:  1/(2.0*Ptr)*sum{p in 1..Ptr}(
+
+
+#z[1] * ((sqrt(((sum{j in 1..nl1}v1[j] * ((sqrt((sum{k in 1..ingr1}win1[k,j]*xtr1[p,k]-win1[ingr1+1,j])^2 + 1)-1)*0.5 +sum{k in 1..ingr1}win1[k,j]*xtr1[p,k]-win1[ingr1+1,j]))^2
+#+ 1)-1)*0.5 + (sum{j in 1..nl1}v1[j] * ((sqrt((sum{k in 1..ingr1}win1[k,j]*xtr1[p,k]-win1[ingr1+1,j])^2 + 1)-1)*0.5 +sum{k in 1..ingr1}win1[k,j]*xtr1[p,k]-win1[ingr1+1,j]))))
+#+
+#z[2] * ((sqrt(((sum{j in 1..nl2}v2[j] * ((sqrt((sum{k in 1..ingr2}win2[k,j]*xtr2[p,k]-win2[ingr2+1,j])^2 + 1)-1)*0.5 + sum{k in 1..ingr2}win2[k,j]*xtr2[p,k]-win2[ingr2+1,j]))^2
+#+ 1)-1)*0.5 + (sum{j in 1..nl2}v2[j] * ((sqrt((sum{k in 1..ingr2}win2[k,j]*xtr2[p,k]-win2[ingr2+1,j])^2 + 1)-1)*0.5 + sum{k in 1..ingr2}win2[k,j]*xtr2[p,k]-win2[ingr2+1,j]))))
+#-ytr[p])^2
+
+#+ 0.5*gamma1*sum{i in 1..ingr1+1, j in 1..nl1}(win1[i,j]^2+v1[j]^2) + 0.5 * gamma2 * sum{k in 1..ingr2+1, l in 1..nl2}(win2[k,l]^2+v2[l]^2);
+
+#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+#z[1] * ((sqrt(((sum{j in 1..nl1}v1[j] * ((sqrt((sum{k in 1..ingr1}win1[k,j]*xv1[p,k]-win1[ingr1+1,j])^2 + 1)-1)*0.5 +sum{k in 1..ingr1}win1[k,j]*xv1[p,k]-win1[ingr1+1,j]))^2
+#+ 1)-1)*0.5 + (sum{j in 1..nl1}v1[j] * ((sqrt((sum{k in 1..ingr1}win1[k,j]*xv1[p,k]-win1[ingr1+1,j])^2 + 1)-1)*0.5 +sum{k in 1..ingr1}win1[k,j]*xv1[p,k]-win1[ingr1+1,j]))))
+#+
+#z[2] * ((sqrt(((sum{j in 1..nl2}v2[j] * ((sqrt((sum{k in 1..ingr2}win2[k,j]*xv2[p,k]-win2[ingr2+1,j])^2 + 1)-1)*0.5 + sum{k in 1..ingr2}win2[k,j]*xv2[p,k]-win2[ingr2+1,j]))^2
+#+ 1)-1)*0.5 + (sum{j in 1..nl2}v2[j] * ((sqrt((sum{k in 1..ingr2}win2[k,j]*xv2[p,k]-win2[ingr2+1,j])^2 + 1)-1)*0.5 + sum{k in 1..ingr2}win2[k,j]*xv2[p,k]-win2[ingr2+1,j]))))
+#-yv[p]);

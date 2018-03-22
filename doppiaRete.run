@@ -8,8 +8,8 @@ let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let gamma1 := 0.00001;
-let gamma2 := 0.00001;
+let gamma1 := 1;
+let gamma2 := 1;
 
 let nl1 := 3;
 let nl2 := 3;
@@ -79,11 +79,11 @@ let {k in 1..Ptr,i in 1..ingr2} xtr2[k,i]:=2.0*((xtr2[k,i]-lb2[i])/(ub2[i]-lb2[i
 let {k in 1..Pv,i in 1..ingr2} xv2[k,i]:=2.0*((xv2[k,i]-lb2[i])/(ub2[i]-lb2[i])-0.5);
 
 
-for{n in 3..6}
+for{n in 2..6}
 {
 
   let nl1 := n;
-  for{m in 3..6}
+  for{m in 2..6}
     {
 
     let nl2 := m;
