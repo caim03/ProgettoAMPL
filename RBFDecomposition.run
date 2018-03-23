@@ -9,14 +9,14 @@ let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
 let rho1 := 0.001;
-let rho2 := 0.001;
+let rho2 := 0.00000000001;
 let sigma := 0.00001;
-let nl := 15;
+let nl := 3;
 let best_nl := nl;
 let err_tr := 1.e30;
 let err_v := 1.e30;
 let stop_tr := 0;
-let nmax := 10;
+let nmax := 100;
 
 # Read training set
 read Ptr < (file_tr);
@@ -106,6 +106,7 @@ repeat while (stop_tr == 0){
               let times := times + 1;
           }
 
+
           fix{a in 1..nl,b in 1..ingr} c[a,b];
           unfix{a in 1..nl} v[a];
 
@@ -113,10 +114,30 @@ repeat while (stop_tr == 0){
           option knitro_options "opttol = 0.0001";
           solve;
 
-
-          unfix{a in 1..nl,b in 1..ingr} c[a,b];
           fix{a in 1..nl} v[a];
-          solve;
+          for{a in 1..nl}
+          {
+
+            if(a>1) then {
+              fix{b in 1..ingr} c[a-1,b];
+            }
+            unfix{b in 1..ingr} c[a,b];
+
+            # Calcolo della distanza massima tra due centri per il calcolo di sigma
+            let dmax := 0;
+            let times := 1;
+            repeat while(times < nl){
+                for{j in times+1..nl}{
+                    let part_sum := sqrt(sum{s in 1..ingr}(c[times, s] - c[j, s])^2);
+                    if (part_sum > dmax)then{
+                        let dmax := part_sum;
+                    }
+                }
+                let times := times + 1;
+            }
+
+            solve;
+          }
 
           if (Error_v < loc_loc_err_v) then {
               printf "Miglioramento Errore decomposizione: old %f new %f\n", loc_loc_err_v, Error_v >> (file_log);

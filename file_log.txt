@@ -1,20 +1,5 @@
 ------------------------------------------------------
-training of the nn with 15 neurons in the hidden layer
+training of the nn with 150 neurons in the hidden layer
 ------------------------------------------------------
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.082608
-Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.082608
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.065778
-Miglioramento Errore: old 0.082608 new 0.065778
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.083948
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.081159
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.072304
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.067795
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.078344
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.082147
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.082902
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.076206
-L'errore migliore sul validation set è 0.065778 con 15 neuroni
-------------------------------------------------------
-training of the nn with 16 neurons in the hidden layer
-------------------------------------------------------
-Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.080559
+Miglioramento Errore decomposizione: old 1000000000000000019884624838656.000000 new 0.186520
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.186520
