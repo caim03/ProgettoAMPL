@@ -17,13 +17,29 @@ param gamma;
 param rho1;
 param rho2;
 param sigma;
+
 param best_nl;
 param err_tr;
 param err_v;
 param loc_err_tr;
 param loc_err_v;
+
+param loc_loc_err_tr;
+param loc_loc_err_v;
+
+param loc_loc_XV{1..Pv};
+param loc_loc_YV{1..Pv};
+
+param loc_XV{1..Pv};
+param loc_YV{1..Pv};
+
+param best_XV{1..Pv};
+param best_YV{1..Pv};
+
 param nmax;
 param stop_tr;
+param n_repeat;
+
 param boh;
 param lb_f;
 param ub_f;
@@ -45,4 +61,8 @@ sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xtr[p,k] - c[j,k
 
 # Validation test
 minimize Error_v: 1/(2.0*Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p])
+sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p]);
+
+minimize XV{p in 1..Pv}: sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2));
+
+minimize YV{p in 1..Pv}: yv[p];
