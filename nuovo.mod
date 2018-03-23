@@ -81,5 +81,5 @@ sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])^2 +
 # Validation BENT
 minimize Error_v: 1/(2.0*Pv)*sum{p in 1..Pv}abs(
 sum{j in 1..nl}(v[j]*
-((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
-sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])
+((sqrt((sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
+sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))-yv[p])

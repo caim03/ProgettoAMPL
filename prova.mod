@@ -62,24 +62,24 @@ var win{1..ingr + 1, 1..nl}; # Pesi in ingresso
 #(1+exp(-(sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))))) -yv[p]);
 
 # RELU
-#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-#sum{j in 1..nl}(v[j]*
-#log(1+exp((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
-
-# Validation RELU
-#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
-#sum{j in 1..nl}(v[j]*
-#log(1+exp((sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
-
-# BENT IDENTITY
 minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
 sum{j in 1..nl}(v[j]*
-((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
-sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])^2 +
-0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+log(1+exp((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))))-ytr[p])^2 +0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
+
+# Validation RELU
+minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+sum{j in 1..nl}(v[j]*
+log(1+exp((sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])))) -yv[p]);
+
+# BENT IDENTITY
+#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+#sum{j in 1..nl}(v[j]*
+#((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
+#sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])^2 +
+#0.5*gamma*sum{i in 1..ingr+1, j in 1..nl}(win[i,j]^2+v[j]^2);
 
 # Validation BENT
-minimize Error_v: 1/(Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j]*
-((sqrt((sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
-sum{k in 1..ingr}win[k,j]*xtr[p,k]-win[ingr+1,j]))-ytr[p])
+#minimize Error_v: 1/(2.0*Pv)*sum{p in 1..Pv}abs(
+#sum{j in 1..nl}(v[j]*
+#((sqrt((sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j])^2 + 1)-1)*0.5 +
+#sum{k in 1..ingr}win[k,j]*xv[p,k]-win[ingr+1,j]))-yv[p])

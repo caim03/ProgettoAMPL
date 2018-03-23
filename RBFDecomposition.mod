@@ -30,15 +30,19 @@ param ub_f;
 param lb{1..ingr};
 param ub{1..ingr};
 
+param dmax;
+param times;
+param part_sum;
+
 # Variabili
 var v{1..nl}; # Pesi in uscita
 var c{1..nl,1..ingr}; # Centri
 
 # Funzione obiettivo training (gaussiana)
 minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-sum{j in 1..nl}(v[j] * exp(-sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2)) - ytr[p])^2 +
+sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2)) - ytr[p])^2 +
 (rho1/2.0)*sum{j in 1..nl}(v[j]^2) + (rho2/2.0)*sum{j in 1..nl,k in 1..ingr}(c[j,k]^2);
 
 # Validation test
 minimize Error_v: 1/(2.0*Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j] * exp(-sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p])
+sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p])

@@ -1,3 +1,38 @@
 ------------------------------------------------------
-training of the nn with 318 neurons in the hidden layer
+training of the nn with 3 neurons in the hidden layer
 ------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.043172
+L'errore migliore sul validation set è 0.043172 con 3 neuroni
+------------------------------------------------------
+training of the nn with 4 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.044895
+Miglioramento Errore: old 0.044895 new 0.042110
+Miglioramento Errore: old 0.042110 new 0.039431
+Miglioramento Errore: old 0.039431 new 0.039013
+L'errore migliore sul validation set è 0.039013 con 4 neuroni
+------------------------------------------------------
+training of the nn with 5 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.039441
+Miglioramento Errore: old 0.039441 new 0.038993
+L'errore migliore sul validation set è 0.038993 con 5 neuroni
+------------------------------------------------------
+training of the nn with 6 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.040974
+Miglioramento Errore: old 0.040974 new 0.038723
+L'errore migliore sul validation set è 0.038723 con 6 neuroni
+------------------------------------------------------
+training of the nn with 7 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.042905
+Miglioramento Errore: old 0.042905 new 0.038516
+L'errore migliore sul validation set è 0.038516 con 7 neuroni
+------------------------------------------------------
+training of the nn with 8 neurons in the hidden layer
+------------------------------------------------------
+Miglioramento Errore: old 1000000000000000019884624838656.000000 new 0.039825
+Miglioramento Errore: old 0.039825 new 0.039255
+Miglioramento Errore: old 0.039255 new 0.038593
+Il migliore errore in assoluto è 0.038516
