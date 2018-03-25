@@ -16,7 +16,7 @@ let best_nl := nl;
 let err_tr := 1.e30;
 let err_v := 1.e30;
 let stop_tr := 0;
-let nmax := 100;
+let nmax := 10;
 
 # Read training set
 read Ptr < (file_tr);
@@ -75,16 +75,21 @@ repeat while (stop_tr == 0){
     let loc_err_tr := 1.e30;
     let loc_err_v := 1.e30;
 
+    let file_centroids := "Progetto/ProgettoAMPL/kMeansCentroid/kMeansCentroids_"&nl&".txt";
+    read{i in 1..nl,h in 1..ingr} (init_centroids[i,h]) < (file_centroids);
+
+
     for{k in 1..nmax}{
         let{i in 1..nl} v[i] := Uniform(-10, 10);
 
-        for{i in 1..nl} {
+        let{i in 1..nl,h in 1..ingr} c[i,h] := init_centroids[i,h];
+        #for{i in 1..nl} {
 
-          let boh := round(Uniform(1,Ptr));
+        #  let boh := round(Uniform(1,Ptr));
 
-          let{h in 1..ingr} c[i,h] := xtr[boh,h];
+        #  let{h in 1..ingr} c[i,h] := xtr[boh,h];
 
-        }
+        #}
 
 
         let loc_loc_err_tr := 1.e30;

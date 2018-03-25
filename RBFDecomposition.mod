@@ -1,6 +1,7 @@
 param file_tr symbolic;
 param file_val symbolic;
 param file_log symbolic;
+param file_centroids symbolic;
 
 param ingr;
 
@@ -49,6 +50,9 @@ param ub{1..ingr};
 param dmax;
 param times;
 param part_sum;
+
+param kmeans;
+param init_centroids{1..nl,1..ingr}; # Centri
 
 # Variabili
 var v{1..nl}; # Pesi in uscita
