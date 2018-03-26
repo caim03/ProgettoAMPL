@@ -8,15 +8,18 @@ let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
-let rho1 := 0.001;
-let rho2 := 0.00000000001;
-let sigma := 0.00001;
-let nl := 3;
-let best_nl := nl;
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let stop_tr := 0;
+let epsilon := 1.e-6;
+
 let nmax := 10;
+let nl := 3;
+let best_nl := nl;
+let gamma := 0.00001;
+
+let stop_tr := 0;
+
+
 
 # Read training set
 read Ptr < (file_tr);
@@ -75,25 +78,29 @@ repeat while (stop_tr == 0){
     let loc_err_tr := 1.e30;
     let loc_err_v := 1.e30;
 
-    let file_centroids := "Progetto/ProgettoAMPL/kMeansCentroid/kMeansCentroids_"&nl&".txt";
-    read{i in 1..nl,h in 1..ingr} (init_centroids[i,h]) < (file_centroids);
+    #let file_centroids := "Progetto/ProgettoAMPL/kMeansCentroid/kMeansCentroids_"&nl&".txt";
+    #read{i in 1..nl,h in 1..ingr} (init_centroids[i,h]) < (file_centroids);
 
 
     for{k in 1..nmax}{
         let{i in 1..nl} v[i] := Uniform(-10, 10);
 
-        let{i in 1..nl,h in 1..ingr} c[i,h] := init_centroids[i,h];
-        #for{i in 1..nl} {
+        #let{i in 1..nl,h in 1..ingr} c[i,h] := init_centroids[i,h];
+        for{i in 1..nl} {
 
-        #  let boh := round(Uniform(1,Ptr));
+          let boh := round(Uniform(1,Ptr));
 
-        #  let{h in 1..ingr} c[i,h] := xtr[boh,h];
+          let{h in 1..ingr} c[i,h] := xtr[boh,h];
 
-        #}
+        }
 
+        let prec_err_tr:=1.e30;
+        let prec_err_v:=1.e30;
 
         let loc_loc_err_tr := 1.e30;
         let loc_loc_err_v := 1.e30;
+
+
         let n_repeat := 0;
         repeat while(n_repeat==0)
         {
@@ -120,38 +127,58 @@ repeat while (stop_tr == 0){
           solve;
 
           fix{a in 1..nl} v[a];
-          for{a in 1..nl}
-          {
+          unfix{a in 1..nl,b in 1..ingr} c[a,b];
 
-            if(a>1) then {
-              fix{b in 1..ingr} c[a-1,b];
-            }
-            unfix{b in 1..ingr} c[a,b];
-
-            # Calcolo della distanza massima tra due centri per il calcolo di sigma
-            let dmax := 0;
-            let times := 1;
-            repeat while(times < nl){
-                for{j in times+1..nl}{
-                    let part_sum := sqrt(sum{s in 1..ingr}(c[times, s] - c[j, s])^2);
-                    if (part_sum > dmax)then{
-                        let dmax := part_sum;
-                    }
-                }
-                let times := times + 1;
-            }
-
-            solve;
+          # Calcolo della distanza massima tra due centri per il calcolo di sigma
+          let dmax := 0;
+          let times := 1;
+          repeat while(times < nl){
+              for{j in times+1..nl}{
+                  let part_sum := sqrt(sum{s in 1..ingr}(c[times, s] - c[j, s])^2);
+                  if (part_sum > dmax)then{
+                      let dmax := part_sum;
+                  }
+              }
+              let times := times + 1;
           }
 
-          if (Error_v < loc_loc_err_v) then {
-              printf "Miglioramento Errore decomposizione: old %f new %f\n", loc_loc_err_v, Error_v >> (file_log);
-              let loc_loc_err_v := Error_v;
-              let loc_loc_err_tr := Error_tr;
+          option solver './knitro';
+          option knitro_options "opttol = 0.0001";
+          solve;
+          #for{a in 1..nl}
+          #{
+#
+#            if(a>1) then {
+#              fix{b in 1..ingr} c[a-1,b];
+#            }
+#            unfix{b in 1..ingr} c[a,b];
+#
+#            # Calcolo della distanza massima tra due centri per il calcolo di sigma
+#            let dmax := 0;
+#            let times := 1;
+#            repeat while(times < nl){
+#                for{j in times+1..nl}{
+#                    let part_sum := sqrt(sum{s in 1..ingr}(c[times, s] - c[j, s])^2);
+#                    if (part_sum > dmax)then{
+#                        let dmax := part_sum;
+#                    }
+#                }
+#                let times := times + 1;
+#            }
+#
+#            solve;
+#          }
 
-              let{p in 1..Pv} loc_loc_XV[p] := XV[p];
-              let{p in 1..Pv} loc_loc_YV[p] := YV[p];
 
+
+          if ( (abs(Error_tr - prec_err_tr))/(1 + prec_err_tr) > epsilon) then {
+              printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr >> (file_log);
+              let prec_err_tr:= Error_tr;
+
+              if(Error_v < loc_loc_err_v) then
+                {
+                  let loc_loc_err_v:=Error_v;
+                }
               let n_repeat := 0;
           }
           else
@@ -162,28 +189,24 @@ repeat while (stop_tr == 0){
         }
 
         if (loc_loc_err_v <= loc_err_v) then {
-            printf "Miglioramento Errore: old %f new %f\n", loc_err_v, loc_loc_err_v >> (file_log);
+            printf "Miglioramento Errore Validation: old %f new %f\n", loc_err_v, loc_loc_err_v >> (file_log);
             let loc_err_v := loc_loc_err_v;
             let loc_err_tr := loc_loc_err_tr;
-            let{p in 1..Pv} loc_XV[p] := loc_loc_XV[p];
-            let{p in 1..Pv} loc_YV[p] := loc_loc_YV[p];
         }
     }
 
-    if (loc_err_v < err_v) then{
-        printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
 
-        let best_nl := nl;
-        let nl := nl + 1;
-        let err_v := loc_err_v;
-        let err_tr := loc_err_tr;
+        if (loc_err_v < err_v) then{
+            printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
 
-        let{p in 1..Pv} best_XV[p] := loc_XV[p];
-        let{p in 1..Pv} best_YV[p] := loc_YV[p];
-    }
-    else {
-        let stop_tr := 1;
-    }
+            let best_nl := nl;
+            let nl := nl + 1;
+            let err_v := loc_err_v;
+            let err_tr := loc_err_tr;
+        }
+        else {
+            let stop_tr := 1;
+        }
 }
 
 printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);

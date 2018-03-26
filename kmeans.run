@@ -19,7 +19,7 @@ read{k in 1..Ptr} (xtr[k,1], xtr[k,2], xtr[k,3], xtr[k,4], xtr[k,5], xtr[k,6],
     xtr[k,42], xtr[k,43], xtr[k,44], xtr[k,45], ytr[k]) < (file_tr);
 
 
-let nl:=8;
+let nl:=3;
 let output := "Progetto/ProgettoAMPL/kMeansCentroid/kMeansCentroids_"&nl&".txt";
 
 
