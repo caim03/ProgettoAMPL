@@ -10,12 +10,13 @@ let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let epsilon := 1.e-6;
+let epsilon := 1.e-4;
 
 let nmax := 10;
 let nl := 3;
 let best_nl := nl;
-let gamma := 0.00001;
+let gamma := 1.e-10;
+let sigma:=0.01;
 
 let stop_tr := 0;
 
