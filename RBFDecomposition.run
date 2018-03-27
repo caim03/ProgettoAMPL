@@ -10,7 +10,7 @@ let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let epsilon := 1.e-4;
+let epsilon := 1.e-6;
 
 let nmax := 10;
 let nl := 3;
@@ -62,13 +62,14 @@ for {i in 1..ingr}
 {
 if(i==3 || i==7 || i==8 || i==9 || i==10 || i==11|| i==20 || i==21 || i==22
 || i==23 || i==24 || i==25 || i==43 || i==44 || i==45) then {
-  let {k in 1..Ptr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
-  let {k in 1..Pv} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+  let {k in 1..Ptr} xtr[k,i]:=((xtr[k,i]-lb[i])/(ub[i]-lb[i]));
+  let {k in 1..Pv} xv[k,i]:=((xv[k,i]-lb[i])/(ub[i]-lb[i]));
 }
 }
 
-let {i in 1..Ptr} ytr[i]:=2.0*((ytr[i]-lb_f)/(ub_f-lb_f)-0.5);
-let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
+let {i in 1..Ptr} ytr[i]:=((ytr[i]-lb_f)/(ub_f-lb_f));
+let {i in 1..Pv} yv[i]:=((yv[i]-lb_f)/(ub_f-lb_f));
+
 
 
 repeat while (stop_tr == 0){
