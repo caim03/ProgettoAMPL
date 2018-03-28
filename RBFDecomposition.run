@@ -7,6 +7,10 @@ data Progetto/ProgettoAMPL/nuovonuovo.dat;
 let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+let bestV := "Progetto/ProgettoAMPL/bestResults/best_v.txt";
+let bestC := "Progetto/ProgettoAMPL/bestResults/best_c.txt";
+
+
 
 let err_tr := 1.e30;
 let err_v := 1.e30;
@@ -15,7 +19,7 @@ let epsilon := 1.e-6;
 let nmax := 10;
 let nl := 3;
 let best_nl := nl;
-let gamma := 1.e-10;
+let gamma := 1.e-6;
 let sigma:=0.01;
 
 let stop_tr := 0;
@@ -86,7 +90,6 @@ repeat while (stop_tr == 0){
 
     for{k in 1..nmax}{
         let{i in 1..nl} v[i] := Uniform(-10, 10);
-
         #let{i in 1..nl,h in 1..ingr} c[i,h] := init_centroids[i,h];
         for{i in 1..nl} {
 
@@ -173,13 +176,16 @@ repeat while (stop_tr == 0){
 
 
 
-          if ( (abs(Error_tr - prec_err_tr))/(1 + prec_err_tr) > epsilon) then {
+          if ( abs(Error_tr - prec_err_tr)/(1 + prec_err_tr) > epsilon) then {
               printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr >> (file_log);
               let prec_err_tr:= Error_tr;
 
               if(Error_v < loc_loc_err_v) then
                 {
                   let loc_loc_err_v:=Error_v;
+                  let loc_loc_err_tr:=Error_tr;
+                  let{i in 1..nl} loc_loc_best_v[i] := v[i];
+                  let{i in 1..nl,j in 1..ingr} loc_loc_best_c[i,j] := c[i,j];
                 }
               let n_repeat := 0;
           }
@@ -190,10 +196,13 @@ repeat while (stop_tr == 0){
 
         }
 
-        if (loc_loc_err_v <= loc_err_v) then {
+        if (loc_loc_err_v < loc_err_v) then {
             printf "Miglioramento Errore Validation: old %f new %f\n", loc_err_v, loc_loc_err_v >> (file_log);
             let loc_err_v := loc_loc_err_v;
             let loc_err_tr := loc_loc_err_tr;
+
+            let{i in 1..nl} loc_best_v[i] := loc_loc_best_v[i];
+            let{i in 1..nl,j in 1..ingr} loc_best_c[i,j] := loc_loc_best_c[i,j];
         }
     }
 
@@ -202,6 +211,9 @@ repeat while (stop_tr == 0){
             printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
 
             let best_nl := nl;
+
+            let{i in 1..nl} best_v[i] := loc_best_v[i];
+            let{i in 1..nl,j in 1..ingr} best_c[i,j] := loc_best_c[i,j];
             let nl := nl + 1;
             let err_v := loc_err_v;
             let err_tr := loc_err_tr;
@@ -211,4 +223,8 @@ repeat while (stop_tr == 0){
         }
 }
 
-printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);
+printf "Il migliore validation error è: %f, con training error: %f, con %d neuroni,", err_v, err_tr, best_nl >> (file_log);
+
+
+printf{i in 1..best_nl} "%f\n", best_v[i] >> (bestV);
+printf{i in 1..best_nl,j in 1..ingr} "%f\n", best_c[i,j] >> (bestC);

@@ -2,6 +2,8 @@ param file_tr symbolic;
 param file_val symbolic;
 param file_log symbolic;
 param file_centroids symbolic;
+param bestV symbolic;
+param bestC symbolic;
 
 param ingr;
 
@@ -56,26 +58,35 @@ param prec_err_tr;
 param prec_err_v;
 param epsilon;
 
+param best_v{1..nl};
+param best_c{1..nl,1..ingr};
+
+param loc_best_v{1..nl};
+param loc_best_c{1..nl,1..ingr};
+
+param loc_loc_best_v{1..nl};
+param loc_loc_best_c{1..nl,1..ingr};
+
+
+
 # Variabili
 var v{1..nl}; # Pesi in uscita
 var c{1..nl,1..ingr}; # Centri
 
 # Funzione obiettivo training (gaussiana)
-minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2)) - ytr[p])^2
-+ (gamma/2.0)*sum{j in 1..nl,k in 1..ingr}(c[j,k]^2 + v[j]^2);
-
-# Validation test
-minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
-sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p]);
-
-# Funzione obiettivo training (multiquadrica inversa)
-#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
-#sum{j in 1..nl}(v[j] * sqrt(sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2 + sigma))  - ytr[p])^2
+#minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2)) - ytr[p])^2
 #+ (gamma/2.0)*sum{j in 1..nl,k in 1..ingr}(c[j,k]^2 + v[j]^2);
 
-#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
-#sum{j in 1..nl}(v[j] * sqrt(sum{k in 1..ingr}(xv[p,k] - c[j,k])^2 + sigma))  - yv[p]);
+# Validation test
+#minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(sum{j in 1..nl}(v[j] * exp(-0.5*(nl/(dmax^2))*sum{k in 1..ingr}(xv[p,k] - c[j,k])^2)) - yv[p]);
+
+# Funzione obiettivo training (multiquadrica inversa)
+minimize Error_tr: 1/(2.0*Ptr)*sum{p in 1..Ptr}(
+sum{j in 1..nl}(v[j] * sqrt(sum{k in 1..ingr}(xtr[p,k] - c[j,k])^2 + sigma))  - ytr[p])^2
++ (gamma/2.0)*sum{j in 1..nl,k in 1..ingr}(c[j,k]^2 + v[j]^2);
+
+minimize Error_v: (1/Pv)*sum{p in 1..Pv}abs(
+sum{j in 1..nl}(v[j] * sqrt(sum{k in 1..ingr}(xv[p,k] - c[j,k])^2 + sigma))  - yv[p]);
 
 
 
