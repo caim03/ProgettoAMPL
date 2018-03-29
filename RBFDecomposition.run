@@ -7,8 +7,6 @@ data Progetto/ProgettoAMPL/nuovonuovo.dat;
 let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
 let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
 let file_log := "Progetto/ProgettoAMPL/file_log.txt";
-let bestV := "Progetto/ProgettoAMPL/bestResults/best_v.txt";
-let bestC := "Progetto/ProgettoAMPL/bestResults/best_c.txt";
 
 
 
@@ -16,14 +14,16 @@ let err_tr := 1.e30;
 let err_v := 1.e30;
 let epsilon := 1.e-6;
 
-let nmax := 10;
+let nmax := 100;
 let nl := 3;
 let best_nl := nl;
-let gamma := 1.e-6;
+let gamma := 1.e-1;
 let sigma:=0.01;
 
 let stop_tr := 0;
 
+let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_best_v_"&gamma&".txt";
+let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_best_c_"&gamma&".txt";
 
 
 # Read training set
