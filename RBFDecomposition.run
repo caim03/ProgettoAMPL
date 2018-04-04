@@ -17,13 +17,13 @@ let epsilon := 1.e-6;
 let nmax := 100;
 let nl := 3;
 let best_nl := nl;
-let gamma := 1.e-1;
+let gamma := 1.e-6;
 let sigma:=0.01;
 
 let stop_tr := 0;
 
-let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_best_v_"&gamma&".txt";
-let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_best_c_"&gamma&".txt";
+let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_v_"&gamma&".txt";
+let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_c_"&gamma&".txt";
 
 
 # Read training set
@@ -98,6 +98,9 @@ repeat while (stop_tr == 0){
           let{h in 1..ingr} c[i,h] := xtr[boh,h];
 
         }
+
+        let{i in 1..nl} start_v[i] := v[i];
+        let{i in 1..nl,j in 1..ingr} start_c[i,j] := c[i,j];
 
         let prec_err_tr:=1.e30;
         let prec_err_v:=1.e30;
@@ -184,8 +187,8 @@ repeat while (stop_tr == 0){
                 {
                   let loc_loc_err_v:=Error_v;
                   let loc_loc_err_tr:=Error_tr;
-                  let{i in 1..nl} loc_loc_best_v[i] := v[i];
-                  let{i in 1..nl,j in 1..ingr} loc_loc_best_c[i,j] := c[i,j];
+                  let{i in 1..nl} loc_loc_best_v[i] := start_v[i];
+                  let{i in 1..nl,j in 1..ingr} loc_loc_best_c[i,j] := start_c[i,j];
                 }
               let n_repeat := 0;
           }

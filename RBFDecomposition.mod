@@ -67,6 +67,8 @@ param loc_best_c{1..nl,1..ingr};
 param loc_loc_best_v{1..nl};
 param loc_loc_best_c{1..nl,1..ingr};
 
+param start_v{1..nl};
+param start_c{1..nl,1..ingr}; 
 
 
 # Variabili
