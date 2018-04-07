@@ -12,10 +12,10 @@ let file_log := "Progetto/ProgettoAMPL/file_log.txt";
 
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let epsilon := 1.e-6;
+let epsilon := 1.e-5;
 
 let nmax := 100;
-let nl := 3;
+let nl := 6;
 let best_nl := nl;
 let gamma := 1.e-6;
 let sigma:=0.01;
@@ -75,7 +75,7 @@ let {i in 1..Ptr} ytr[i]:=((ytr[i]-lb_f)/(ub_f-lb_f));
 let {i in 1..Pv} yv[i]:=((yv[i]-lb_f)/(ub_f-lb_f));
 
 
-
+#Inizio ciclo di training, ad ogni ciclo viene aumentato un neurone
 repeat while (stop_tr == 0){
     printf "------------------------------------------------------\n" > (file_log);
     printf "training of the nn with %d neurons in the hidden layer\n", nl > (file_log);
@@ -84,36 +84,29 @@ repeat while (stop_tr == 0){
     let loc_err_tr := 1.e30;
     let loc_err_v := 1.e30;
 
-    #let file_centroids := "Progetto/ProgettoAMPL/kMeansCentroid/kMeansCentroids_"&nl&".txt";
-    #read{i in 1..nl,h in 1..ingr} (init_centroids[i,h]) < (file_centroids);
-
-
+    #Inizio ciclo dei nmax training, con numero di neuroni fissato e pesi/centri iniziali casuali/variabili
     for{k in 1..nmax}{
-        let{i in 1..nl} v[i] := Uniform(-10, 10);
-        #let{i in 1..nl,h in 1..ingr} c[i,h] := init_centroids[i,h];
-        for{i in 1..nl} {
+        #Assegno valori casuali ai pesi e centri
 
-          let boh := round(Uniform(1,Ptr));
+        read{i in 1..nl} (v[i]) < (bestV);
+        read{i in 1..nl,j in 1..ingr} (c[i,j]) < (bestC);
 
-          let{h in 1..ingr} c[i,h] := xtr[boh,h];
-
-        }
-
+        #Salvo in una variabile i pesi/centri iniziali
         let{i in 1..nl} start_v[i] := v[i];
         let{i in 1..nl,j in 1..ingr} start_c[i,j] := c[i,j];
 
         let prec_err_tr:=1.e30;
-        let prec_err_v:=1.e30;
 
         let loc_loc_err_tr := 1.e30;
         let loc_loc_err_v := 1.e30;
 
 
+        #Inizio ciclo di decomposizione a due blocchi
         let n_repeat := 0;
         repeat while(n_repeat==0)
         {
 
-          # Calcolo della distanza massima tra due centri per il calcolo di sigma
+          # Calcolo della distanza massima tra due centri per il calcolo di sigma (SERVE PER LA GAUSSIANA)
           let dmax := 0;
           let times := 1;
           repeat while(times < nl){
@@ -127,6 +120,7 @@ repeat while (stop_tr == 0){
           }
 
 
+          #Il primo blocco consiste nel calcolare i pesi v, fissati i centri
           fix{a in 1..nl,b in 1..ingr} c[a,b];
           unfix{a in 1..nl} v[a];
 
@@ -134,10 +128,11 @@ repeat while (stop_tr == 0){
           option knitro_options "opttol = 0.0001";
           solve;
 
+          #Il secondo blocco consiste nel caclolare i centri c, fissati i pesi. z
           fix{a in 1..nl} v[a];
           unfix{a in 1..nl,b in 1..ingr} c[a,b];
 
-          # Calcolo della distanza massima tra due centri per il calcolo di sigma
+          # Calcolo della distanza massima tra due centri per il calcolo di sigma (SERVE PER LA GAUSSIANA)
           let dmax := 0;
           let times := 1;
           repeat while(times < nl){
@@ -153,6 +148,9 @@ repeat while (stop_tr == 0){
           option solver './knitro';
           option knitro_options "opttol = 0.0001";
           solve;
+
+
+          #Abbiamo anche provato a fare una decomposizione con tanti blocchi quanti neuroni, ma non ottenendo migliorie. Per completezza il codice è il seguente:
           #for{a in 1..nl}
           #{
 #
@@ -177,8 +175,7 @@ repeat while (stop_tr == 0){
 #            solve;
 #          }
 
-
-
+          #Condizione di stop della decomposizione. Se bisogna ciclare, vengono aggiornati i parametri con gli errori,centri e pesi migliori (Ciclo interno)
           if ( abs(Error_tr - prec_err_tr)/(1 + prec_err_tr) > epsilon) then {
               printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr >> (file_log);
               let prec_err_tr:= Error_tr;
@@ -199,6 +196,7 @@ repeat while (stop_tr == 0){
 
         }
 
+        #Confronto tra gli errori migliori trovati nelle nmax iterazioni (Ciclo intermedio)
         if (loc_loc_err_v < loc_err_v) then {
             printf "Miglioramento Errore Validation: old %f new %f\n", loc_err_v, loc_loc_err_v >> (file_log);
             let loc_err_v := loc_loc_err_v;
@@ -209,7 +207,7 @@ repeat while (stop_tr == 0){
         }
     }
 
-
+        #Confronto tra gli errori migliori trovati aumentando i neuroni (Ciclo esterno), se ottengo un miglioramento allora provo con un neurone in più altrimenti mi fermo
         if (loc_err_v < err_v) then{
             printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
 
@@ -229,5 +227,5 @@ repeat while (stop_tr == 0){
 printf "Il migliore validation error è: %f, con training error: %f, con %d neuroni,", err_v, err_tr, best_nl >> (file_log);
 
 
-printf{i in 1..best_nl} "%f\n", best_v[i] >> (bestV);
-printf{i in 1..best_nl,j in 1..ingr} "%f\n", best_c[i,j] >> (bestC);
+printf{i in 1..best_nl} "%f\n", best_v[i] > (bestV);
+printf{i in 1..best_nl,j in 1..ingr} "%f\n", best_c[i,j] > (bestC);

@@ -1,0 +1,125 @@
+reset;
+option randseed 0;
+
+model Progetto/ProgettoAMPL/RBFDecomposition.mod;
+data Progetto/ProgettoAMPL/nuovonuovo.dat;
+
+
+
+#let file_tr := "Progetto/ProgettoAMPL/full_training.txt";
+#let file_test := "INSERIRE TEST";
+
+
+let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
+let file_test := "Progetto/ProgettoAMPL/cleaned_validation.txt";
+
+let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+
+
+let err_tr := 1.e30;
+let err_v := 1.e30;
+let epsilon := 1.e-4;
+
+let nl := 6;
+let gamma := 1.e-6;
+let sigma:=0.01;
+
+let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_v_"&gamma&".txt";
+let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_c_"&gamma&".txt";
+
+# Read training set
+read Ptr < (file_tr);
+read{k in 1..Ptr} (xtr[k,1], xtr[k,2], xtr[k,3], xtr[k,4], xtr[k,5], xtr[k,6],
+    xtr[k,7], xtr[k,8], xtr[k,9], xtr[k,10], xtr[k,11],
+    xtr[k,12], xtr[k,13], xtr[k,14], xtr[k,15], xtr[k,16],
+    xtr[k,17], xtr[k,18], xtr[k,19], xtr[k,20], xtr[k,21],
+    xtr[k,22], xtr[k,23], xtr[k,24], xtr[k,25], xtr[k,26],
+    xtr[k,27], xtr[k,28], xtr[k,29], xtr[k,30], xtr[k,31],
+    xtr[k,32], xtr[k,33], xtr[k,34], xtr[k,35], xtr[k,36],
+    xtr[k,37], xtr[k,38], xtr[k,39], xtr[k,40], xtr[k,41],
+    xtr[k,42], xtr[k,43], xtr[k,44], xtr[k,45], ytr[k]) < (file_tr);
+
+
+#Read test set
+read Ptest < (file_test);
+read{k in 1..Ptest} (xtest[k,1], xtest[k,2], xtest[k,3], xtest[k,4], xtest[k,5], xtest[k,6],
+    xtest[k,7], xtest[k,8], xtest[k,9], xtest[k,10], xtest[k,11],
+    xtest[k,12], xtest[k,13], xtest[k,14], xtest[k,15], xtest[k,16],
+    xtest[k,17], xtest[k,18], xtest[k,19], xtest[k,20], xtest[k,21],
+    xtest[k,22], xtest[k,23], xtest[k,24], xtest[k,25], xtest[k,26],
+    xtest[k,27], xtest[k,28], xtest[k,29], xtest[k,30], xtest[k,31],
+    xtest[k,32], xtest[k,33], xtest[k,34], xtest[k,35], xtest[k,36],
+    xtest[k,37], xtest[k,38], xtest[k,39], xtest[k,40], xtest[k,41],
+    xtest[k,42], xtest[k,43], xtest[k,44], xtest[k,45], ytest[k]) < (file_test);
+
+# Scaling data
+let lb_f := min{i in 1..Ptr}ytr[i];
+let ub_f := max{i in 1..Ptr}ytr[i];
+
+for {i in 1..ingr}{
+    let lb[i] := min{j in 1..Ptr}xtr[j,i];
+}
+
+for {i in 1..ingr}{
+    let ub[i] := max{j in 1..Ptr}xtr[j,i];
+}
+
+for {i in 1..ingr}{
+  if(i==3 || i==7 || i==8 || i==9 || i==10 || i==11|| i==20 || i==21 || i==22
+  || i==23 || i==24 || i==25 || i==43 || i==44 || i==45) then {
+    let {k in 1..Ptr} xtr[k,i]:=((xtr[k,i]-lb[i])/(ub[i]-lb[i]));
+    let {k in 1..Ptest} xtest[k,i]:=((xtest[k,i]-lb[i])/(ub[i]-lb[i]));
+}
+}
+
+let {i in 1..Ptr} ytr[i]:=((ytr[i]-lb_f)/(ub_f-lb_f));
+let {i in 1..Ptest} ytest[i]:=((ytest[i]-lb_f)/(ub_f-lb_f));
+
+
+let n_repeat := 0;
+let loc_err_tr:=1.e30;
+let prec_err_tr:=1.e30;
+
+
+read{i in 1..nl} (v[i]) < (bestV);
+read{i in 1..nl,j in 1..ingr} (c[i,j]) < (bestC);
+
+repeat while(n_repeat==0)
+{
+
+  fix{a in 1..nl,b in 1..ingr} c[a,b];
+  unfix{a in 1..nl} v[a];
+
+  option solver './knitro';
+  option knitro_options "opttol = 0.0001";
+  solve;
+
+  fix{a in 1..nl} v[a];
+  unfix{a in 1..nl,b in 1..ingr} c[a,b];
+
+  option solver './knitro';
+  option knitro_options "opttol = 0.0001";
+  solve;
+
+  if ( abs(Error_tr - prec_err_tr)/(1 + prec_err_tr) > epsilon) then {
+      printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr > (file_log);
+      let prec_err_tr:= Error_tr;
+
+      #if(Error_tr < loc_err_tr) then
+      #  {
+          let loc_err_tr:=Error_tr;
+          let{i in 1..nl} best_v[i] := v[i];
+          let{i in 1..nl,j in 1..ingr} best_c[i,j] := c[i,j];
+      #  }
+      let n_repeat := 0;
+  }
+  else
+  {
+    let n_repeat := 1;
+  }
+}
+
+
+
+printf "L'errore nel test è: %f\n",(1/Ptest)*sum{p in 1..Ptest}abs(
+sum{j in 1..nl}(best_v[j] * sqrt(sum{k in 1..ingr}(xtest[p,k] - best_c[j,k])^2 + sigma))  - ytest[p]) > (file_log);
