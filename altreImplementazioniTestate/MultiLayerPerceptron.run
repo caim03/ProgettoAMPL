@@ -1,0 +1,107 @@
+reset;
+option randseed 0;
+
+model Progetto/ProgettoAMPL/MultiLayerPerceptron.mod;
+data Progetto/ProgettoAMPL/MultiLayerPerceptron.dat;
+
+let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
+let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
+let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+
+let gamma := 0.0001;
+let nl := 3;
+let best_nl := nl;
+let err_tr := 1.e30;
+let err_v := 1.e30;
+let stop_tr := 0;
+let nmax := 10;
+
+
+# Read training set
+read Ptr < (file_tr);
+read{k in 1..Ptr} (xtr[k,1], xtr[k,2], xtr[k,3], xtr[k,4], xtr[k,5], xtr[k,6],
+    xtr[k,7], xtr[k,8], xtr[k,9], xtr[k,10], xtr[k,11],
+    xtr[k,12], xtr[k,13], xtr[k,14], xtr[k,15], xtr[k,16],
+    xtr[k,17], xtr[k,18], xtr[k,19], xtr[k,20], xtr[k,21],
+    xtr[k,22], xtr[k,23], xtr[k,24], ytr[k]) < (file_tr);
+
+# Read validation set
+read Pv < (file_val);
+read{k in 1..Pv} (xv[k,1], xv[k,2], xv[k,3], xv[k,4], xv[k,5], xv[k,6],
+  xv[k,7], xv[k,8], xv[k,9], xv[k,10], xv[k,11],
+  xv[k,12], xv[k,13], xv[k,14], xv[k,15], xv[k,16],
+  xv[k,17], xv[k,18], xv[k,19], xv[k,20], xv[k,21],
+  xv[k,22], xv[k,23], xv[k,24], yv[k]) < (file_val);
+
+# Scaling data
+let lb_f := min{i in 1..Ptr}ytr[i];
+let ub_f := max{i in 1..Ptr}ytr[i];
+
+for {i in 1..ingr}{
+    let lb[i] := min{j in 1..Ptr}xtr[j,i];
+}
+
+for {i in 1..ingr}{
+    let ub[i] := max{j in 1..Ptr}xtr[j,i];
+}
+
+
+#for {i in 1..ingr}
+#{
+#if(i==3 || i==7 || i==8|| i==9 || i==10 || i==11|| i==20 || i==21 || i==22
+#|| i==23 || i==24 || i==25 || i==27 || i==28) then {
+#  let {k in 1..Ptr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+#  let {k in 1..Pv} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+#}
+#}
+for {i in 1..ingr}
+{
+if(i==2 || i==5 || i==6|| i==7 || i==8 || i==13|| i==14 || i==15 || i==16
+|| i==17) then {
+  let {k in 1..Ptr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+  let {k in 1..Pv} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+}
+}
+
+let {i in 1..Ptr} ytr[i]:=2.0*((ytr[i]-lb_f)/(ub_f-lb_f)-0.5);
+let {i in 1..Pv} yv[i]:=2.0*((yv[i]-lb_f)/(ub_f-lb_f)-0.5);
+#let {k in 1..Ptr,i in 1..ingr} xtr[k,i]:=2.0*((xtr[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+#let {k in 1..Pv,i in 1..ingr} xv[k,i]:=2.0*((xv[k,i]-lb[i])/(ub[i]-lb[i])-0.5);
+
+repeat while (stop_tr == 0){
+    printf "------------------------------------------------------\n" > (file_log);
+    printf "training of the nn with %d neurons in the hidden layer\n", nl > (file_log);
+    printf "------------------------------------------------------\n" > (file_log);
+
+    let loc_err_tr := 1.e30;
+    let loc_err_v := 1.e30;
+
+    for{k in 1..nmax}{
+        let{i in 1..ingr+1, j in 1..nl} win[i,j] := Uniform(-1, 1);
+        let{i in 1..nl} v[i] := Uniform(-1, 1);
+
+        option solver './knitro';
+        option knitro_options "opttol = 0.0001";
+        solve;
+
+        if (Error_v <= loc_err_v) then {
+            printf "Miglioramento Errore: old %f new %f\n", loc_err_v, Error_v >> (file_log);
+            let loc_err_v := Error_v;
+            let loc_err_tr := Error_tr;
+        }
+    }
+
+    if (loc_err_v < err_v) then{
+        printf "L'errore migliore sul validation set è %f con %d neuroni\n", loc_err_v, nl >> (file_log);
+
+        let best_nl := nl;
+        let nl := nl + 1;
+        let err_v := loc_err_v;
+        let err_tr := loc_err_tr;
+    }
+    else {
+        let stop_tr := 1;
+    }
+}
+
+printf "Il migliore errore in assoluto è %f\n", err_v >> (file_log);

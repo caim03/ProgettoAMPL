@@ -6,4 +6,8 @@ Iterazione decomposizione: old 0.002437 new 0.002259
 Iterazione decomposizione: old 0.002259 new 0.002158
 Iterazione decomposizione: old 0.002158 new 0.001976
 Iterazione decomposizione: old 0.001976 new 0.001875
-L'errore nel test è: 0.037552
+Iterazione decomposizione: old 0.001875 new 0.001804
+Iterazione decomposizione: old 0.001804 new 0.001734
+Iterazione decomposizione: old 0.001734 new 0.001664
+Iterazione decomposizione: old 0.001664 new 0.001596
+L'errore nel test è: 0.036294

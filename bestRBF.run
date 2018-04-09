@@ -1,31 +1,26 @@
 reset;
 option randseed 0;
 
-model Progetto/ProgettoAMPL/RBFDecomposition.mod;
-data Progetto/ProgettoAMPL/nuovonuovo.dat;
+model RBFDecomposition.mod;
+data RBFDecomposition.dat;
 
 
-
-#let file_tr := "Progetto/ProgettoAMPL/full_training.txt";
-#let file_test := "INSERIRE TEST";
-
-
-let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
-let file_test := "Progetto/ProgettoAMPL/cleaned_validation.txt";
-
-let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+#Inserire il path corretto
+let file_tr := "full_cleaned_training.txt";
+#let file_test := "test.txt";
+let file_log := "file_log.txt";
 
 
 let err_tr := 1.e30;
 let err_v := 1.e30;
-let epsilon := 1.e-4;
+let epsilon := 0.000066;
 
 let nl := 6;
 let gamma := 1.e-6;
 let sigma:=0.01;
 
-let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_v_"&gamma&".txt";
-let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_c_"&gamma&".txt";
+let bestV := "bestResults/Multi_bestStart_v_"&gamma&".txt";
+let bestC := "bestResults/Multi_bestStart_c_"&gamma&".txt";
 
 # Read training set
 read Ptr < (file_tr);
@@ -81,6 +76,7 @@ let loc_err_tr:=1.e30;
 let prec_err_tr:=1.e30;
 
 
+#Leggo i pesi iniziali
 read{i in 1..nl} (v[i]) < (bestV);
 read{i in 1..nl,j in 1..ingr} (c[i,j]) < (bestC);
 
@@ -104,13 +100,9 @@ repeat while(n_repeat==0)
   if ( abs(Error_tr - prec_err_tr)/(1 + prec_err_tr) > epsilon) then {
       printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr > (file_log);
       let prec_err_tr:= Error_tr;
-
-      #if(Error_tr < loc_err_tr) then
-      #  {
-          let loc_err_tr:=Error_tr;
-          let{i in 1..nl} best_v[i] := v[i];
-          let{i in 1..nl,j in 1..ingr} best_c[i,j] := c[i,j];
-      #  }
+      let loc_err_tr:=Error_tr;
+      let{i in 1..nl} best_v[i] := v[i];
+      let{i in 1..nl,j in 1..ingr} best_c[i,j] := c[i,j];
       let n_repeat := 0;
   }
   else

@@ -1,12 +1,12 @@
 reset;
 option randseed 0;
 
-model Progetto/ProgettoAMPL/RBFDecomposition.mod;
-data Progetto/ProgettoAMPL/nuovonuovo.dat;
+model RBFDecomposition.mod;
+data RBFDecomposition.dat;
 
-let file_tr := "Progetto/ProgettoAMPL/cleaned_training.txt";
-let file_val := "Progetto/ProgettoAMPL/cleaned_validation.txt";
-let file_log := "Progetto/ProgettoAMPL/file_log.txt";
+let file_tr := "cleaned_training.txt";
+let file_val := "cleaned_validation.txt";
+let file_log := "file_log.txt";
 
 
 
@@ -15,15 +15,15 @@ let err_v := 1.e30;
 let epsilon := 1.e-5;
 
 let nmax := 100;
-let nl := 6;
+let nl := 3;
 let best_nl := nl;
 let gamma := 1.e-6;
 let sigma:=0.01;
 
 let stop_tr := 0;
 
-let bestV := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_v_"&gamma&".txt";
-let bestC := "Progetto/ProgettoAMPL/bestResults/Multi_bestStart_c_"&gamma&".txt";
+let bestV := "bestResults/Multi_bestStart_v_"&gamma&".txt";
+let bestC := "bestResults/Multi_bestStart_c_"&gamma&".txt";
 
 
 # Read training set
@@ -87,9 +87,16 @@ repeat while (stop_tr == 0){
     #Inizio ciclo dei nmax training, con numero di neuroni fissato e pesi/centri iniziali casuali/variabili
     for{k in 1..nmax}{
         #Assegno valori casuali ai pesi e centri
+        let{i in 1..nl} v[i] := Uniform(-10, 10);
 
-        read{i in 1..nl} (v[i]) < (bestV);
-        read{i in 1..nl,j in 1..ingr} (c[i,j]) < (bestC);
+        for{i in 1..nl} {
+
+          let app := round(Uniform(1,Ptr));
+
+          let{h in 1..ingr} c[i,h] := xtr[boh,h];
+
+        }
+
 
         #Salvo in una variabile i pesi/centri iniziali
         let{i in 1..nl} start_v[i] := v[i];
@@ -182,6 +189,7 @@ repeat while (stop_tr == 0){
 
               if(Error_v < loc_loc_err_v) then
                 {
+                  printf "BEST">(file_log);
                   let loc_loc_err_v:=Error_v;
                   let loc_loc_err_tr:=Error_tr;
                   let{i in 1..nl} loc_loc_best_v[i] := start_v[i];
