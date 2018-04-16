@@ -5,6 +5,8 @@ param file_log symbolic; #File di log
 #param file_centroids symbolic; #
 param bestV symbolic; #File in cui vengono salvati i pesi V migliori (iniziali)
 param bestC symbolic; #File in cui vengono salvati i centri C migliori (iniziali)
+param best_weigth symbolic;
+param best_centr symbolic;
 
 param ingr; #Ingressi
 

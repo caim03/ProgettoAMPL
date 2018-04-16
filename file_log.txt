@@ -1,13 +1,5 @@
-Iterazione decomposizione: old 1000000000000000019884624838656.000000 new 0.007776
-Iterazione decomposizione: old 0.007776 new 0.003558
-Iterazione decomposizione: old 0.003558 new 0.002771
-Iterazione decomposizione: old 0.002771 new 0.002437
-Iterazione decomposizione: old 0.002437 new 0.002259
-Iterazione decomposizione: old 0.002259 new 0.002158
-Iterazione decomposizione: old 0.002158 new 0.001976
-Iterazione decomposizione: old 0.001976 new 0.001875
-Iterazione decomposizione: old 0.001875 new 0.001804
-Iterazione decomposizione: old 0.001804 new 0.001734
-Iterazione decomposizione: old 0.001734 new 0.001664
-Iterazione decomposizione: old 0.001664 new 0.001596
-L'errore nel test è: 0.036294
+Iterazione decomposizione: old 1000000000000000019884624838656.000000 new 0.005649
+Iterazione decomposizione: old 0.005649 new 0.002799
+Iterazione decomposizione: old 0.002799 new 0.002066
+Iterazione decomposizione: old 0.002066 new 0.001858
+Iterazione decomposizione: old 0.001858 new 0.001744

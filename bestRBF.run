@@ -5,10 +5,13 @@ model RBFDecomposition.mod;
 data RBFDecomposition.dat;
 
 
-#Inserire il path corretto
-let file_tr := "full_cleaned_training.txt";
+#Inserire i path corretti
+
+let file_tr := "full_cleaned_training";
 #let file_test := "test.txt";
 let file_log := "file_log.txt";
+let best_weigth := "best_weigth.txt";
+let best_centr := "best_centr.txt";
 
 
 let err_tr := 1.e30;
@@ -18,9 +21,6 @@ let epsilon := 0.000066;
 let nl := 6;
 let gamma := 1.e-6;
 let sigma:=0.01;
-
-let bestV := "bestResults/Multi_bestStart_v_"&gamma&".txt";
-let bestC := "bestResults/Multi_bestStart_c_"&gamma&".txt";
 
 # Read training set
 read Ptr < (file_tr);
@@ -33,7 +33,6 @@ read{k in 1..Ptr} (xtr[k,1], xtr[k,2], xtr[k,3], xtr[k,4], xtr[k,5], xtr[k,6],
     xtr[k,32], xtr[k,33], xtr[k,34], xtr[k,35], xtr[k,36],
     xtr[k,37], xtr[k,38], xtr[k,39], xtr[k,40], xtr[k,41],
     xtr[k,42], xtr[k,43], xtr[k,44], xtr[k,45], ytr[k]) < (file_tr);
-
 
 #Read test set
 read Ptest < (file_test);
@@ -62,56 +61,16 @@ for {i in 1..ingr}{
 for {i in 1..ingr}{
   if(i==3 || i==7 || i==8 || i==9 || i==10 || i==11|| i==20 || i==21 || i==22
   || i==23 || i==24 || i==25 || i==43 || i==44 || i==45) then {
-    let {k in 1..Ptr} xtr[k,i]:=((xtr[k,i]-lb[i])/(ub[i]-lb[i]));
     let {k in 1..Ptest} xtest[k,i]:=((xtest[k,i]-lb[i])/(ub[i]-lb[i]));
 }
 }
 
-let {i in 1..Ptr} ytr[i]:=((ytr[i]-lb_f)/(ub_f-lb_f));
 let {i in 1..Ptest} ytest[i]:=((ytest[i]-lb_f)/(ub_f-lb_f));
 
 
-let n_repeat := 0;
-let loc_err_tr:=1.e30;
-let prec_err_tr:=1.e30;
-
-
-#Leggo i pesi iniziali
-read{i in 1..nl} (v[i]) < (bestV);
-read{i in 1..nl,j in 1..ingr} (c[i,j]) < (bestC);
-
-repeat while(n_repeat==0)
-{
-
-  fix{a in 1..nl,b in 1..ingr} c[a,b];
-  unfix{a in 1..nl} v[a];
-
-  option solver './knitro';
-  option knitro_options "opttol = 0.0001";
-  solve;
-
-  fix{a in 1..nl} v[a];
-  unfix{a in 1..nl,b in 1..ingr} c[a,b];
-
-  option solver './knitro';
-  option knitro_options "opttol = 0.0001";
-  solve;
-
-  if ( abs(Error_tr - prec_err_tr)/(1 + prec_err_tr) > epsilon) then {
-      printf "Iterazione decomposizione: old %f new %f\n", prec_err_tr, Error_tr > (file_log);
-      let prec_err_tr:= Error_tr;
-      let loc_err_tr:=Error_tr;
-      let{i in 1..nl} best_v[i] := v[i];
-      let{i in 1..nl,j in 1..ingr} best_c[i,j] := c[i,j];
-      let n_repeat := 0;
-  }
-  else
-  {
-    let n_repeat := 1;
-  }
-}
-
-
+#Leggo i pesi migliori
+read{i in 1..nl} (v[i]) < (best_weigth);
+read{i in 1..nl,j in 1..ingr} (c[i,j]) < (best_centr);
 
 printf "L'errore nel test è: %f\n",(1/Ptest)*sum{p in 1..Ptest}abs(
-sum{j in 1..nl}(best_v[j] * sqrt(sum{k in 1..ingr}(xtest[p,k] - best_c[j,k])^2 + sigma))  - ytest[p]) > (file_log);
+sum{j in 1..nl}(v[j] * sqrt(sum{k in 1..ingr}(xtest[p,k] - c[j,k])^2 + sigma))  - ytest[p]) > (file_log);

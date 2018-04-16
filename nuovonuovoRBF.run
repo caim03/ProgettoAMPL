@@ -26,7 +26,9 @@ read{k in 1..Ptr} (xtr[k,1], xtr[k,2], xtr[k,3], xtr[k,4], xtr[k,5], xtr[k,6],
     xtr[k,17], xtr[k,18], xtr[k,19], xtr[k,20], xtr[k,21],
     xtr[k,22], xtr[k,23], xtr[k,24], xtr[k,25], xtr[k,26],
     xtr[k,27], xtr[k,28], xtr[k,29], xtr[k,30], xtr[k,31],
-    xtr[k,32], ytr[k]) < (file_tr);
+    xtr[k,32], xtr[k,33], xtr[k,34], xtr[k,35], xtr[k,36],
+    xtr[k,37], xtr[k,38], xtr[k,39], xtr[k,40], xtr[k,41],
+    xtr[k,42], xtr[k,43], xtr[k,44], xtr[k,45], ytr[k]) < (file_tr);
 
 # Read validation set
 read Pv < (file_val);
@@ -36,7 +38,9 @@ read{k in 1..Pv} (xv[k,1], xv[k,2], xv[k,3], xv[k,4], xv[k,5], xv[k,6],
   xv[k,17], xv[k,18], xv[k,19], xv[k,20], xv[k,21],
   xv[k,22], xv[k,23], xv[k,24], xv[k,25], xv[k,26],
   xv[k,27], xv[k,28], xv[k,29], xv[k,30], xv[k,31],
-  xv[k,32], yv[k]) < (file_val);
+  xv[k,32], xv[k,33], xv[k,34], xv[k,35], xv[k,36],
+  xv[k,37], xv[k,38], xv[k,39], xv[k,40], xv[k,41],
+  xv[k,42], xv[k,43], xv[k,44], xv[k,45] , yv[k]) < (file_val);
 
 # Scaling data
 let lb_f := min{i in 1..Ptr}ytr[i];
